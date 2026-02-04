@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: repeat(3, 100px);
+      grid-template-rows: repeat(3, 100px);
+      gap: 5px;
+    }
+
+    .cell {
+      width: 100px;
+      height: 100px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2.5em;
+      background-color: #fff;
+      cursor: pointer;
+      border: 2px solid #333;
+    }
+
+    .cell:hover {
+      background-color: #e0e0e0;
+    }
+
+    .info {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 1.2em;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      font-size: 1em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div>
+    <div class="board" id="board">
+      <div class="cell" data-index="0"></div>
+      <div class="cell" data-index="1"></div>
+      <div class="cell" data-index="2"></div>
+      <div class="cell" data-index="3"></div>
+      <div class="cell" data-index="4"></div>
+      <div class="cell" data-index="5"></div>
+      <div class="cell" data-index="6"></div>
+      <div class="cell" data-index="7"></div>
+      <div class="cell" data-index="8"></div>
+    </div>
+    <div class="info" id="info">Player X's turn</div>
+    <button onclick="resetGame()">Restart Game</button>
+  </div>
+
+  <script>
+    const board = document.getElementById('board');
+    const info = document.getElementById('info');
+    let cells = document.querySelectorAll('.cell');
+    let currentPlayer = 'X';
+    let gameOver = false;
+    let boardState = Array(9).fill(null);
+
+    const winningCombinations = [
+      [0,1,2], [3,4,5], [6,7,8], // rows
+      [0,3,6], [1,4,7], [2,5,8], // columns
+      [0,4,8], [2,4,6]           // diagonals
+    ];
+
+    function checkWinner() {
+      for (let combo of winningCombinations) {
+        const [a, b, c] = combo;
+        if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+          gameOver = true;
+          info.textContent = `Player ${boardState[a]} wins!`;
+          return;
+        }
+      }
+      if (!boardState.includes(null)) {
+        gameOver = true;
+        info.textContent = `It's a draw!`;
+      }
+    }
+
+    cells.forEach(cell => {
+      cell.addEventListener('click', () => {
+        const index = cell.getAttribute('data-index');
+        if (!boardState[index] && !gameOver) {
+          boardState[index] = currentPlayer;
+          cell.textContent = currentPlayer;
+          checkWinner();
+          if (!gameOver) {
+            currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+            info.textContent = `Player ${currentPlayer}'s turn`;
+          }
+        }
+      });
+    });
+
+    function resetGame() {
+      boardState = Array(9).fill(null);
+      cells.forEach(cell => cell.textContent = '');
+      currentPlayer = 'X';
+      gameOver = false;
+      info.textContent = `Player X's turn`;
+    }
+  </script>
+
+</body>
+</html>
